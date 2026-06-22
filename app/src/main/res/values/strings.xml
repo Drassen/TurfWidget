@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Turf Widget</string>
+    <string name="prefs_name">Turf Widget Settings</string>    
+    
+    <string name="user_email_title">Turf account</string>
+    <string name="user_email_summary">Your account email used for Turf</string>
+    <string name="user_email_dialog">Enter your Google account email</string>
+    
+    <string name="update_freq_title">Update Frequency</string>
+    <string name="update_freq_dialog">Choose how often to update</string>
+    
+    <string name="vibrate_title">Vibrate</string>
+    <string name="vibrate_summary">Vibrate on alert</string>
+    
+    <string name="notify_title">Show notifications</string>
+    <string name="notify_summary">Show notification when a zone is lost</string>
+
+    <string name="layout_title">Layout</string>
+    <string name="layout_dialog">Choose widget layout</string>
+
+    <string name="unknown"></string>
+    <string name="power">Power</string>
+    <string name="per_hour">Per hour</string>
+    <string name="zones">Zones</string>
+    <string name="place">Place</string>
+    <string name="alert">Alert</string>
+    
+    <string name="settings">Settings</string>
+    <string name="refresh">Refresh</string>
+    
+    <string name="ticker_text">Zone lost</string>
+
+    <string name="turf_not_installed">Please install the game Turf to use this function</string>
+
+    <string name="error_no_account">No account\nChange settings</string>
+    <string name="error_network">Connection error</string>
+    <string name="error_server">Server not responding</string>
+    <string name="error_parse">Server error</string>
+
+    <string name="channel_zone_alerts">Zone alerts</string>
+    <string name="channel_zone_alerts_desc">Notifies you when you lose a zone</string>
+</resources>
