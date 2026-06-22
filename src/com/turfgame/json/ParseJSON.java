@@ -13,6 +13,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +28,12 @@ import com.turfgame.widget.TurfWidget;
 public class ParseJSON {
 	private static final String URL_ADRESS = "http://api.turfgame.com/v4/users";
 	private static final String DEBUG_TAG = "ParseJSON";
+
+	// Network timeouts (ms). Without these the HTTP client can block the
+	// background update thread indefinitely, leaving the widget stuck on the
+	// progress spinner and unresponsive to taps.
+	private static final int CONNECTION_TIMEOUT = 15000;
+	private static final int SOCKET_TIMEOUT = 15000;
 
 	public static CharStats parseJSON(String email) {
 		if (TurfWidget.DEBUG) {
@@ -40,7 +49,10 @@ public class ParseJSON {
 		}
 
 		StringBuilder stringBuilder = new StringBuilder();
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpParams httpParams = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
+		HttpConnectionParams.setSoTimeout(httpParams, SOCKET_TIMEOUT);
+		HttpClient httpClient = new DefaultHttpClient(httpParams);
 		HttpPost httpPost = new HttpPost(URL_ADRESS);
 		JSONObject jsonPostObject = new JSONObject();
 

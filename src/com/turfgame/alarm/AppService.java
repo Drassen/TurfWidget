@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
@@ -64,7 +65,15 @@ public class AppService extends Service
 			vibrator = false;
 		}
 
-		new updateTask().execute(vibrator);
+		// From API 11 onwards AsyncTask.execute() runs every task on a single
+		// shared serial thread. A slow (or hung) update would then block all
+		// later taps. Use the thread pool executor so taps stay responsive.
+		updateTask task = new updateTask();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, vibrator);
+		} else {
+			task.execute(vibrator);
+		}
 
 		return START_STICKY;
 	}
@@ -77,6 +86,10 @@ public class AppService extends Service
 			RemoteViews statsView = new RemoteViews(getApplicationContext().getPackageName(), getApplicationContext().getResources().getIdentifier(Prefs.getLayout(getApplicationContext()), "layout", getApplicationContext().getPackageName()));
 			statsView.setViewVisibility(R.id.refresh, View.GONE);
 			statsView.setViewVisibility(R.id.ProgressBarWrapper, View.VISIBLE);
+			// Keep the click handlers bound while the spinner is showing,
+			// otherwise the widget is unresponsive to taps during the update
+			// (and stays that way if the update never completes).
+			bindEventHandlers(statsView);
 			updateWidgets(statsView);
 		}
 
@@ -127,7 +140,13 @@ public class AppService extends Service
 		}
 
 		// Bind event handlers to the views.
+		bindEventHandlers(statsView);
 
+		return statsView;
+	}
+
+	private void bindEventHandlers(RemoteViews statsView)
+	{
 		// Prefs
 		Intent prefsIntent = new Intent(this, Prefs.class);
 		PendingIntent prefsPendingIntent = PendingIntent.getActivity(this,
@@ -153,8 +172,6 @@ public class AppService extends Service
 		                                                                refresh,
 		                                                                0);
 		statsView.setOnClickPendingIntent(R.id.refresh, refreshPendingIntent);
-
-		return statsView;
 	}
 
 	private void updateWidgets(RemoteViews statsView)
